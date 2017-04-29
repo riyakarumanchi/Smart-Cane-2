@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Just randoly adding a comment
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
