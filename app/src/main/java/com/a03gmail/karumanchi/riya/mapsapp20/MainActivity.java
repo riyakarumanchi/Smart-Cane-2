@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         // add in text box listeners for getting the start and destination
         // DON'T FORGET, EVENTUALLY USER SHOULD BE ABLE TO DO THIS VERBALLY
         // I.E. app should say "say where you would like to go", and start
