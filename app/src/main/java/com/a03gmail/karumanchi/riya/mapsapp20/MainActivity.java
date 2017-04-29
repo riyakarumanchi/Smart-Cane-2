@@ -17,14 +17,41 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+
+import android.speech.RecognizerIntent;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    // test 4:12pm
-    // test 4:13pm
+    private TextView txtSpeechInput;
+    private ImageButton btnSpeak;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+
+        // hide the action bar
+        getActionBar().hide();
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
+
+        /*
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+
+                Log.d("Troubleshooting","this is a test");
             }
         });
 
@@ -80,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         //Testing the parser to return latitude and longitude
         //Parser parser = new Parser();
         //parser.googleMapsParser();
-
+        */
     }
 
     public void goToHelpScreen(View view) {
