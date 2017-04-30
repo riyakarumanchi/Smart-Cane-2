@@ -90,6 +90,7 @@ public class Main3Activity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_LOGS}, 1);
 
         //gps
+        /*
         locationText = (TextView) findViewById(R.id.locationText);
         locationButton = (Button) findViewById(R.id.locationButton);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -101,7 +102,9 @@ public class Main3Activity extends AppCompatActivity {
                 locationText.setText(location.getLongitude() + " " + location.getLatitude());
             }
         });
+        */
         //gps crashes if I delete this, I don't know why...
+
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {

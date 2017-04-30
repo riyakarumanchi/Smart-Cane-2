@@ -32,18 +32,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/locationButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/update" />
-
-        <TextView
-            android:id="@+id/locationText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Current Location" />
     </LinearLayout>
 
 </RelativeLayout>
