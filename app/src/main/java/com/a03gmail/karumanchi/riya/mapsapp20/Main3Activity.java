@@ -45,6 +45,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -412,6 +413,16 @@ public class Main3Activity extends AppCompatActivity {
                     //finish();
                 }
                 break;
+            case REQ_CODE_SPEECH_INPUT: {
+                        if (resultCode == RESULT_OK && null != data) {
+
+                            ArrayList<String> result = data
+                                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                            //txtSpeechInput.setText(result.get(0));
+                        }
+                        break;
+                    }
+
             default:
                 Log.e(TAG, "wrong request code");
                 break;
