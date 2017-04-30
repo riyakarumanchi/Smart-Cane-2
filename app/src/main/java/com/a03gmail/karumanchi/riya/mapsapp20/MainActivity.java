@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Just randomly adding a comment
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         // DON'T FORGET, EVENTUALLY USER SHOULD BE ABLE TO DO THIS VERBALLY
         // I.E. app should say "say where you would like to go", and start
         // should automatically take current location
+
+        //Testing the parser to return latitude and longitude
+        //Parser parser = new Parser();
+        //parser.googleMapsParser();
+
     }
 
     public void goToHelpScreen(View view) {
