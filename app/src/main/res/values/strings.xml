@@ -1,5 +1,5 @@
 <resources>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Connect</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="app_name">Smart Cane</string>
     <string name="device">Device:</string>
@@ -48,4 +48,6 @@
     <string name="ble_not_supported">Bluetooth Low Energy not supported</string>
     <string name="scan">Scan</string>
     <string name="cancel">Cancel</string>
+    <string name="user">User</string>
+    <string name="no_profile">No Profile</string>
 </resources>

@@ -13,13 +13,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -38,8 +42,8 @@ public class Main3Activity extends AppCompatActivity {
     private static final int UART_PROFILE_CONNECTED = 20;
     private static final int UART_PROFILE_DISCONNECTED = 21;
     private static final int STATE_OFF = 10;
+    private Menu optionsMenu;
 
-    TextView mRemoteRssiVal;
     RadioGroup mRg;
     private int mState = UART_PROFILE_DISCONNECTED;
     private BluetoothLeService mService = null;
@@ -55,10 +59,14 @@ public class Main3Activity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
         GetGoogleJsonData dl = new GetGoogleJsonData(this);
         dl.execute(uri);
 
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_LOGS}, 1);
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null) {
@@ -76,39 +84,60 @@ public class Main3Activity extends AppCompatActivity {
 
 
         // Handle Disconnect & Connect button
-        btnConnectDisconnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mBtAdapter.isEnabled()) {
-                    Log.i(TAG, "onClick - BT not enabled yet");
-                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-                }
-                else {
-                    if (btnConnectDisconnect.getText().equals("Connect")){
-
-                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-
-                        Intent newIntent = new Intent(Main3Activity.this, DeviceListActivity.class);
-                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
-                    } else {
-                        //Disconnect button pressed
-                        if (mDevice!=null)
-                        {
-                            mService.disconnect();
-
-                        }
-                    }
-                }
-            }
-        });
+        btnConnectDisconnect.setOnClickListener(clickListener);
         // Handle Send button
 
 
         // Set initial UI state
 
     }
+    private  View.OnClickListener clickListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!mBtAdapter.isEnabled()) {
+                Log.i(TAG, "onClick - BT not enabled yet");
+                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            }
+            else {
+                if (btnConnectDisconnect.getText().equals("Connect")){
 
+                    //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
+
+                    Intent newIntent = new Intent(Main3Activity.this, DeviceListActivity.class);
+                    startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
+                } else {
+                    //Disconnect button pressed
+                    if (mDevice!=null)
+                    {
+                        mService.disconnect();
+
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_configure_user:
+                Intent newIntent = new Intent(Main3Activity.this, Main2Activity.class);
+                startActivity(newIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        optionsMenu = menu;
+        return true;
+    }
     //UART service connected/disconnected
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder rawBinder) {
@@ -149,7 +178,8 @@ public class Main3Activity extends AppCompatActivity {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         Log.d(TAG, "UART_CONNECT_MSG"+mDevice.getName()+ " - ready");
                         btnConnectDisconnect.setText("Disconnect");
-                        ((TextView) findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - ready");
+                        optionsMenu.getItem(1).setIcon(getResources()
+                                .getDrawable(R.drawable.connection_ok));
                         //listAdapter.add("["+currentDateTimeString+"] Connected to: "+ mDevice.getName());
                         //messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
                         mState = UART_PROFILE_CONNECTED;
@@ -164,7 +194,8 @@ public class Main3Activity extends AppCompatActivity {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         Log.d(TAG, "UART_DISCONNECT_MSG");
                         btnConnectDisconnect.setText("Connect");
-                        ((TextView) findViewById(R.id.deviceName)).setText("Not Connected");
+                        optionsMenu.getItem(1).setIcon(getResources()
+                                .getDrawable(R.drawable.connection));
                         //listAdapter.add("["+currentDateTimeString+"] Disconnected to: "+ mDevice.getName());
                         mState = UART_PROFILE_DISCONNECTED;
                         mService.close();
@@ -288,7 +319,6 @@ public class Main3Activity extends AppCompatActivity {
                     mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
 
                     Log.d(TAG, "... onActivityResultdevice.address==" + mDevice + "mserviceValue" + mService);
-                    ((TextView) findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - connecting");
                     mService.connect(deviceAddress);
 
 
