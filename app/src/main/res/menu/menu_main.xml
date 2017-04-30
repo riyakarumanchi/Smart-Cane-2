@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_configure_user"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_action_name"
+        android:icon="@drawable/ic_actionpro"
         android:title="@string/user"
         app:showAsAction="ifRoom" />
     <item

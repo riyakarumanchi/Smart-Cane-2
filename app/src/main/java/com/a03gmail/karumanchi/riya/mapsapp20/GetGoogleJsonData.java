@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Mike on 29-Apr-17.
@@ -106,10 +108,13 @@ public class GetGoogleJsonData extends AsyncTask<String, Void, String> {
                             String subtitle = output[1].replace("<b>","").replace("</b>","");
                             DirectionItem directionItem = new DirectionItem(header,subtitle);
                             items.add(directionItem);
-                            step.length();
                         }
                     }
                 }
+                DestinationAdapter adapter = new DestinationAdapter(myActivity, items);
+
+                ListView newDevicesListView = (ListView) myActivity.findViewById(R.id.list_view);
+                newDevicesListView.setAdapter(adapter);
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
