@@ -48,11 +48,16 @@ public class Main3Activity extends AppCompatActivity {
     //private ListView messageListView;
     //private ArrayAdapter<String> listAdapter;
     private Button btnConnectDisconnect;
+    String uri = "https://maps.googleapis.com/maps/api/directions/json?origin=903+beechwood+ave+mississauga&destination=dixie+outlet+mall&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
+
     //private EditText edtMessage;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
+        GetGoogleJsonData dl = new GetGoogleJsonData(this);
+        dl.execute(uri);
+
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
