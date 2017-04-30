@@ -85,8 +85,8 @@ public class Main3Activity extends AppCompatActivity {
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 locationManager.requestLocationUpdates("gps", 1000, 0, listener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 locationText.setText(location.getLongitude() + " " + location.getLatitude());
             }
         });
