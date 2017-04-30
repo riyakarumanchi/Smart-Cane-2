@@ -84,8 +84,8 @@ public class Main3Activity extends AppCompatActivity {
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
-        GetGoogleJsonData dl = new GetGoogleJsonData(this);
-        dl.execute(uri);
+        //GetGoogleJsonData dl = new GetGoogleJsonData(this);
+        //dl.execute(uri);
 
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_LOGS}, 1);
 
@@ -418,6 +418,42 @@ public class Main3Activity extends AppCompatActivity {
 
                             ArrayList<String> result = data
                                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                            String destText = result.get(0);
+                            destText = destText.replaceAll(" ", "+");
+                            String originText = "";
+
+                            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                            //locationButton.setOnClickListener(new View.OnClickListener() {
+
+                            locationManager.requestLocationUpdates("gps", 1000, 0, listener);
+                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                    //locationText.setText(location.getLongitude() + " " + location.getLatitude());
+                            //});
+                            originText = location.getLongitude() + "," + location.getLatitude();
+
+                            uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
+
+                            GetGoogleJsonData dl = new GetGoogleJsonData(this);
+                            dl.execute(uri);
+                            //gps crashes if I delete this, I don't know why...
+                            listener = new LocationListener() {
+                                @Override
+                                public void onLocationChanged(Location location) {
+                                    //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
+                                }
+                                @Override
+                                public void onStatusChanged(String s, int i, Bundle bundle) {
+                                }
+                                @Override
+                                public void onProviderEnabled(String s) {
+                                }
+                                @Override
+                                public void onProviderDisabled(String s) {
+                                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(i);
+                                }
+                            };
+
                             //txtSpeechInput.setText(result.get(0));
                         }
                         break;
