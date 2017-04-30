@@ -100,6 +100,9 @@ public class GetGoogleJsonData extends AsyncTask<String, Void, String> {
                         JSONArray steps_array = legs_obj.getJSONArray("steps");
                         for(int k =0; k< steps_array.length(); k++){
                             String step =  steps_array.getJSONObject(k).getString("html_instructions");
+                            String[] output = step.split("</b>",2);
+                            String header = output[0].replace("<b>","").replace("</b>","");
+                            String subtitle = output[1].replace("<b>","").replace("</b>","");
                             step.length();
                         }
                     }
