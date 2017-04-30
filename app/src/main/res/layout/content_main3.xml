@@ -12,40 +12,38 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main3"
     tools:context="com.a03gmail.karumanchi.riya.mapsapp20.Main3Activity">
+
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:layout_height="match_parent"
         >
 
         <Button
             android:id="@+id/btn_select"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
             android:background="@color/buttonAccent"
-            android:textColor="@color/colorPrimary"
-            android:text="Connect" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <TextView
-            android:id="@+id/locationText"
+            android:padding="16dp"
+            android:text="Connect"
+            android:textColor="@color/colorPrimary" />
+
+        <Space
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/locationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/update" />
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Current Location" />
     </LinearLayout>
 
 </RelativeLayout>
