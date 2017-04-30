@@ -42,8 +42,8 @@
             android:id="@+id/new_devices"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="2"
-            android:stackFromBottom="true" />
+            android:paddingTop="60dp"
+            android:layout_weight="2" />
 
         <TextView
             android:id="@+id/empty"
