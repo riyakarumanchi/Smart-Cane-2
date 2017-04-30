@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +23,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +46,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Main3Activity extends AppCompatActivity {
 
@@ -54,6 +58,7 @@ public class Main3Activity extends AppCompatActivity {
     private static final int UART_PROFILE_DISCONNECTED = 21;
     private static final int STATE_OFF = 10;
     private Menu optionsMenu;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     RadioGroup mRg;
     private int mState = UART_PROFILE_DISCONNECTED;
@@ -133,10 +138,35 @@ public class Main3Activity extends AppCompatActivity {
         btnConnectDisconnect.setOnClickListener(clickListener);
         // Handle Send button
 
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                promptSpeechInput();
+                //Intent newIntent = new Intent(Main2Activity.this, Main4Activity.class);
+                //startActivity(newIntent);
+            }
+        });
         // Set initial UI state
 
     }
+
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private  View.OnClickListener clickListener =  new View.OnClickListener() {
         @Override
         public void onClick(View v) {

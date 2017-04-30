@@ -51,4 +51,6 @@
     <string name="user">User</string>
     <string name="no_profile">No Profile</string>
     <string name="update">Update Location</string>
+    <string name="speech_prompt">Waiting for user speech input</string>
+    <string name="speech_not_supported">Speech not supported</string>
 </resources>
