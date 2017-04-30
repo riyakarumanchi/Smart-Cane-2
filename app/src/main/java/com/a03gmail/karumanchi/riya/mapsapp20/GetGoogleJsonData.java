@@ -84,6 +84,7 @@ public class GetGoogleJsonData extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        ArrayList<DirectionItem> items = new ArrayList<>();
         // Dismiss the progress dialog
         if(result !=null)
         {
@@ -103,6 +104,8 @@ public class GetGoogleJsonData extends AsyncTask<String, Void, String> {
                             String[] output = step.split("</b>",2);
                             String header = output[0].replace("<b>","").replace("</b>","");
                             String subtitle = output[1].replace("<b>","").replace("</b>","");
+                            DirectionItem directionItem = new DirectionItem(header,subtitle);
+                            items.add(directionItem);
                             step.length();
                         }
                     }
