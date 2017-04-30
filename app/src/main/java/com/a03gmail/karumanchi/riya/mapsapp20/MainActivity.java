@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         // should automatically take current location
 
         //Testing the parser to return latitude and longitude
-        //Parser parser = new Parser();
-        //parser.googleMapsParser();
 
     }
 
