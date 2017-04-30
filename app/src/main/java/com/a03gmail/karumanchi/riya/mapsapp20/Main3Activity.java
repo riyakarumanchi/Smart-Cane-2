@@ -432,7 +432,7 @@ public class Main3Activity extends AppCompatActivity {
                             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                                     //locationText.setText(location.getLongitude() + " " + location.getLatitude());
                             //});
-                            originText = location.getLatitude() + "," + location.getLongitude();
+                            originText = 43.2644233 + "," + -79.87067569999999;
 
                             uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
 
