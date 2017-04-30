@@ -45,7 +45,8 @@ import ca.uhn.fhir.rest.client.IGenericClient;
 import static com.a03gmail.karumanchi.riya.mapsapp20.Main2Activity.PREFS_NAME;
 
 public class Main4Activity extends AppCompatActivity {
-
+    private IGenericClient client;
+    FhirContext ctx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +56,8 @@ public class Main4Activity extends AppCompatActivity {
         if (patientId > 0) {
 
         }
+
+        Log.d("TIIII","Got ID: ");
     }
 
     public void saveUser(View view) throws ParseException {
@@ -64,9 +67,8 @@ public class Main4Activity extends AppCompatActivity {
         EditText editTexttDob = (EditText) findViewById(R.id.input_dob);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         Date dob_var = sdf.parse(editTexttDob.getText().toString());
-        FhirContext ctx = FhirContext.forDstu2();
-        String serverBase = "http://fhirtest.uhn.ca/baseDstu2";
-        IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+        ctx = FhirContext.forDstu2();
+        client = ctx.newRestfulGenericClient("http://fhirtest.uhn.ca/baseDstu2");
         Patient patient = new Patient();
         // ..populate the patient object..
         patient.addIdentifier().setSystem("urn:system").setValue("12345");
@@ -87,7 +89,7 @@ public class Main4Activity extends AppCompatActivity {
         // any of these things were provided by the server! They may not
         // always be)
         IdDt id = (IdDt) outcome.getId();
-        System.out.println("Got ID: " + id.getValue());
+        Log.d("TIIII","Got ID: " + id.getValue());
 
     }
 }
