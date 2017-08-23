@@ -92,8 +92,11 @@ public class DeviceListActivity extends Activity {
 
     }
 
+    /**
+     * initializes te devices list container with a list of bluetooth devices
+     */
     private void populateList() {
-        /* Initialize device list container */
+
         Log.d(TAG, "populateList");
         deviceList = new ArrayList<BluetoothDevice>();
         deviceAdapter = new DeviceAdapter(this, deviceList);
@@ -220,6 +223,11 @@ public class DeviceListActivity extends Activity {
         List<BluetoothDevice> devices;
         LayoutInflater inflater;
 
+        /**
+         * initializes bluetooth context and links adapters to class
+         * @param context
+         * @param devices
+         */
         public DeviceAdapter(Context context, List<BluetoothDevice> devices) {
             this.context = context;
             inflater = LayoutInflater.from(context);
@@ -231,8 +239,13 @@ public class DeviceListActivity extends Activity {
             return devices.size();
         }
 
+        /**
+         * Gets bluetooth device from list.
+         * @param position
+         * @return Bluetooth device at position
+         */
         @Override
-        public Object getItem(int position) {
+        public BluetoothDevice getItem(int position) {
             return devices.get(position);
         }
 
@@ -273,6 +286,11 @@ public class DeviceListActivity extends Activity {
             return vg;
         }
     }
+
+    /**
+     * helper method for showing toast
+     * @param msg
+     */
     private void showMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }

@@ -110,12 +110,15 @@ public class Main3Activity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
             }
+
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
             }
+
             @Override
             public void onProviderEnabled(String s) {
             }
+
             @Override
             public void onProviderDisabled(String s) {
                 Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -133,9 +136,8 @@ public class Main3Activity extends AppCompatActivity {
 //        listAdapter = new ArrayAdapter<String>(this, R.layout.message_detail);
 //        messageListView.setAdapter(listAdapter);
 //        messageListView.setDivider(null);
-        btnConnectDisconnect=(Button) findViewById(R.id.btn_select);
+        btnConnectDisconnect = (Button) findViewById(R.id.btn_select);
         service_init();
-
 
 
         // Handle Disconnect & Connect button
@@ -171,16 +173,15 @@ public class Main3Activity extends AppCompatActivity {
         }
     }
 
-    private  View.OnClickListener clickListener =  new View.OnClickListener() {
+    private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (!mBtAdapter.isEnabled()) {
                 Log.i(TAG, "onClick - BT not enabled yet");
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            }
-            else {
-                if (btnConnectDisconnect.getText().equals("Connect")){
+            } else {
+                if (btnConnectDisconnect.getText().equals("Connect")) {
 
                     //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
 
@@ -188,8 +189,7 @@ public class Main3Activity extends AppCompatActivity {
                     startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
                 } else {
                     //Disconnect button pressed
-                    if (mDevice!=null)
-                    {
+                    if (mDevice != null) {
                         mService.disconnect();
 
                     }
@@ -218,6 +218,7 @@ public class Main3Activity extends AppCompatActivity {
         optionsMenu = menu;
         return true;
     }
+
     //UART service connected/disconnected
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder rawBinder) {
@@ -256,7 +257,7 @@ public class Main3Activity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     public void run() {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                        Log.d(TAG, "UART_CONNECT_MSG"+mDevice.getName()+ " - ready");
+                        Log.d(TAG, "UART_CONNECT_MSG" + mDevice.getName() + " - ready");
                         btnConnectDisconnect.setText("Disconnect");
                         optionsMenu.getItem(1).setIcon(getResources()
                                 .getDrawable(R.drawable.connection_ok));
@@ -299,7 +300,7 @@ public class Main3Activity extends AppCompatActivity {
                         try {
                             String text = new String(txValue, "UTF-8");
                             String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                            Log.i(TAG, "Message: "+"["+currentDateTimeString+"] RX: "+text);
+                            Log.i(TAG, "Message: " + "[" + currentDateTimeString + "] RX: " + text);
 
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
@@ -308,7 +309,7 @@ public class Main3Activity extends AppCompatActivity {
                 });
             }
             //*********************//
-            if (action.equals(BluetoothLeService.DEVICE_DOES_NOT_SUPPORT_UART)){
+            if (action.equals(BluetoothLeService.DEVICE_DOES_NOT_SUPPORT_UART)) {
                 showMessage("Device doesn't support UART. Disconnecting");
                 mService.disconnect();
             }
@@ -323,6 +324,7 @@ public class Main3Activity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(UARTStatusChangeReceiver, makeGattUpdateIntentFilter());
     }
+
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
@@ -332,6 +334,7 @@ public class Main3Activity extends AppCompatActivity {
         intentFilter.addAction(BluetoothLeService.DEVICE_DOES_NOT_SUPPORT_UART);
         return intentFilter;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -349,7 +352,7 @@ public class Main3Activity extends AppCompatActivity {
         }
         unbindService(mServiceConnection);
         mService.stopSelf();
-        mService= null;
+        mService = null;
 
     }
 
@@ -417,22 +420,33 @@ public class Main3Activity extends AppCompatActivity {
                 }
                 break;
             case REQ_CODE_SPEECH_INPUT: {
-                        if (resultCode == RESULT_OK && null != data) {
+                if (resultCode == RESULT_OK && null != data) {
 
-                            ArrayList<String> result = data
-                                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                            String destText = result.get(0);
-                            destText = destText.replaceAll(" ", "+");
-                            String originText = "";
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    String destText = result.get(0);
+                    destText = destText.replaceAll(" ", "+");
+                    String originText = "";
 
-                            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                            //locationButton.setOnClickListener(new View.OnClickListener() {
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    //locationButton.setOnClickListener(new View.OnClickListener() {
 
-                            locationManager.requestLocationUpdates("gps", 1000, 0, listener);
-                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                                    //locationText.setText(location.getLongitude() + " " + location.getLatitude());
-                            //});
-                            originText = 43.2644233 + "," + -79.87067569999999;
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+                            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+                            double longitude = location.getLongitude();
+                            double latitiude = location.getLatitude();
+                            originText = latitiude + "," + longitude;
 
                             uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
 
@@ -469,7 +483,7 @@ public class Main3Activity extends AppCompatActivity {
     }
 
 
-
+/
     private void showMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
