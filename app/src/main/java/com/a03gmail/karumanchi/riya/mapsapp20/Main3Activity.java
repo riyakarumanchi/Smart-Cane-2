@@ -105,18 +105,45 @@ public class Main3Activity extends AppCompatActivity {
         */
         //gps crashes if I delete this, I don't know why...
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //locationButton.setOnClickListener(new View.OnClickListener() {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         listener = new LocationListener() {
+            private Location previousLocation;
+
             @Override
             public void onLocationChanged(Location location) {
+                if (previousLocation != null) {
+                    // transformation for 2 points into a bearing
+                    double y = Math.sin(location.getLongitude() - previousLocation.getLongitude()) * Math.cos(location.getLatitude());
+                    double x = Math.cos(location.getLatitude()) * Math.sin(previousLocation.getLatitude()) -
+                            Math.sin(location.getLatitude()) * Math.cos(previousLocation.getLatitude());
+                    double bearing = Math.toDegrees(Math.atan2(y, x));
+                    showMessage(Double.toString(bearing) + " degrees");
+                } else {
+                    previousLocation = location;
+                }
                 //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
             }
 
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
+
             }
 
             @Override
             public void onProviderEnabled(String s) {
+
             }
 
             @Override
@@ -125,6 +152,8 @@ public class Main3Activity extends AppCompatActivity {
                 startActivity(i);
             }
         };
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null) {
@@ -428,8 +457,6 @@ public class Main3Activity extends AppCompatActivity {
                     destText = destText.replaceAll(" ", "+");
                     String originText = "";
 
-                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                    //locationButton.setOnClickListener(new View.OnClickListener() {
 
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
@@ -441,41 +468,21 @@ public class Main3Activity extends AppCompatActivity {
                         // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
-                            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                    Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
-                            double longitude = location.getLongitude();
-                            double latitiude = location.getLatitude();
-                            originText = latitiude + "," + longitude;
+                    double longitude = location.getLongitude();
+                    double latitiude = location.getLatitude();
+                    originText = latitiude + "," + longitude;
 
-                            uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
+                    uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
 
-                            GetGoogleJsonData dl = new GetGoogleJsonData(this);
-                            dl.execute(uri);
-                            //gps crashes if I delete this, I don't know why...
-                            listener = new LocationListener() {
-                                @Override
-                                public void onLocationChanged(Location location) {
-                                    //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
-                                }
-                                @Override
-                                public void onStatusChanged(String s, int i, Bundle bundle) {
-                                }
-                                @Override
-                                public void onProviderEnabled(String s) {
-                                }
-                                @Override
-                                public void onProviderDisabled(String s) {
-                                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    startActivity(i);
-                                }
-                            };
-
-                            //txtSpeechInput.setText(result.get(0));
-                        }
-                        break;
-                    }
-
+                    GetGoogleJsonData dl = new GetGoogleJsonData(this);
+                    dl.execute(uri);
+                    //gps crashes if I delete this, I don't know why...
+                    //txtSpeechInput.setText(result.get(0));
+                }
+                break;
+            }
             default:
                 Log.e(TAG, "wrong request code");
                 break;
