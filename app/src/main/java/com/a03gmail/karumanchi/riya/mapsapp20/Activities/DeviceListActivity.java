@@ -1,4 +1,4 @@
-package com.a03gmail.karumanchi.riya.mapsapp20;
+package com.a03gmail.karumanchi.riya.mapsapp20.Activities;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -11,20 +11,20 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.a03gmail.karumanchi.riya.mapsapp20.R;
+import com.a03gmail.karumanchi.riya.mapsapp20.Utils.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class DeviceListActivity extends Activity {
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            UIUtil.showMessage(this, R.string.ble_not_supported);
             finish();
         }
 
@@ -74,7 +74,7 @@ public class DeviceListActivity extends Activity {
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            UIUtil.showMessage(this, R.string.ble_not_supported);
             finish();
             return;
         }
@@ -285,13 +285,5 @@ public class DeviceListActivity extends Activity {
             }
             return vg;
         }
-    }
-
-    /**
-     * helper method for showing toast
-     * @param msg
-     */
-    private void showMessage(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

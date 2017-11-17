@@ -12,6 +12,6 @@ public class DirectionItem {
     public DirectionItem(String inHeader, String inSubtitle) {
         this.header = inHeader;
         this.subtitle = inSubtitle;
-    };
+    }
 
 }

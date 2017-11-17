@@ -1,13 +1,11 @@
 package com.a03gmail.karumanchi.riya.mapsapp20;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.a03gmail.karumanchi.riya.mapsapp20.Adapters.DestinationAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,11 +16,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by Mike on 29-Apr-17.

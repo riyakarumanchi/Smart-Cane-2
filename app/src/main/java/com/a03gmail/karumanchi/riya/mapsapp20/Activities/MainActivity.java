@@ -1,4 +1,4 @@
-package com.a03gmail.karumanchi.riya.mapsapp20;
+package com.a03gmail.karumanchi.riya.mapsapp20.Activities;
 
 import android.Manifest;
 import android.app.Activity;
@@ -15,7 +15,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,17 +38,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.a03gmail.karumanchi.riya.mapsapp20.GetGoogleJsonData;
+import com.a03gmail.karumanchi.riya.mapsapp20.R;
+import com.a03gmail.karumanchi.riya.mapsapp20.Services.BluetoothLeService;
+import com.a03gmail.karumanchi.riya.mapsapp20.Utils.UIUtil;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class Main3Activity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
@@ -79,7 +78,7 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
@@ -129,7 +128,7 @@ public class Main3Activity extends AppCompatActivity {
                     double x = Math.cos(location.getLatitude()) * Math.sin(previousLocation.getLatitude()) -
                             Math.sin(location.getLatitude()) * Math.cos(previousLocation.getLatitude());
                     double bearing = Math.toDegrees(Math.atan2(y, x));
-                    showMessage(Double.toString(bearing) + " degrees");
+                    UIUtil.showMessage(MainActivity.this, Double.toString(bearing) + " degrees");
                 } else {
                     previousLocation = location;
                 }
@@ -157,7 +156,7 @@ public class Main3Activity extends AppCompatActivity {
 
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            UIUtil.showMessage(this, "Bluetooth is not available", Toast.LENGTH_LONG);
             //finish();
             return;
         }
@@ -178,7 +177,7 @@ public class Main3Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 promptSpeechInput();
-                //Intent newIntent = new Intent(Main2Activity.this, Main4Activity.class);
+                //Intent newIntent = new Intent(UserProfileActivity.this, EditProfileActivity.class);
                 //startActivity(newIntent);
             }
         });
@@ -196,9 +195,7 @@ public class Main3Activity extends AppCompatActivity {
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
+            UIUtil.showMessage(this, getString(R.string.speech_not_supported));
         }
     }
 
@@ -214,7 +211,7 @@ public class Main3Activity extends AppCompatActivity {
 
                     //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
 
-                    Intent newIntent = new Intent(Main3Activity.this, DeviceListActivity.class);
+                    Intent newIntent = new Intent(MainActivity.this, DeviceListActivity.class);
                     startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
                 } else {
                     //Disconnect button pressed
@@ -232,7 +229,7 @@ public class Main3Activity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_configure_user:
-                Intent newIntent = new Intent(Main3Activity.this, Main2Activity.class);
+                Intent newIntent = new Intent(MainActivity.this, UserProfileActivity.class);
                 startActivity(newIntent);
                 return true;
             default:
@@ -339,7 +336,7 @@ public class Main3Activity extends AppCompatActivity {
             }
             //*********************//
             if (action.equals(BluetoothLeService.DEVICE_DOES_NOT_SUPPORT_UART)) {
-                showMessage("Device doesn't support UART. Disconnecting");
+                UIUtil.showMessage(context, "Device doesn't support UART. Disconnecting");
                 mService.disconnect();
             }
 
@@ -382,7 +379,7 @@ public class Main3Activity extends AppCompatActivity {
         unbindService(mServiceConnection);
         mService.stopSelf();
         mService = null;
-
+        locationManager.removeUpdates(listener);
     }
 
     @Override
@@ -439,12 +436,12 @@ public class Main3Activity extends AppCompatActivity {
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(this, "Bluetooth has turned on ", Toast.LENGTH_SHORT).show();
+                    UIUtil.showMessage(this, "Bluetooth has turned on ");
 
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(this, "Problem in BT Turning ON ", Toast.LENGTH_SHORT).show();
+                    UIUtil.showMessage(this, "Problem in BT Turning ON ");
                     //finish();
                 }
                 break;
@@ -489,13 +486,6 @@ public class Main3Activity extends AppCompatActivity {
         }
     }
 
-
-
-    private void showMessage(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-
-    }
-
     @Override
     public void onBackPressed() {
         if (mState == UART_PROFILE_CONNECTED) {
@@ -503,7 +493,7 @@ public class Main3Activity extends AppCompatActivity {
             startMain.addCategory(Intent.CATEGORY_HOME);
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
-            showMessage("nRFUART's running in background.\n             Disconnect to exit");
+            UIUtil.showMessage(this,"nRFUART's running in background.\n             Disconnect to exit");
         }
         else {
             new AlertDialog.Builder(this)

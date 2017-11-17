@@ -1,14 +1,14 @@
-package com.a03gmail.karumanchi.riya.mapsapp20;
+package com.a03gmail.karumanchi.riya.mapsapp20.Adapters;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.a03gmail.karumanchi.riya.mapsapp20.DirectionItem;
+import com.a03gmail.karumanchi.riya.mapsapp20.R;
 
 import java.util.List;
 

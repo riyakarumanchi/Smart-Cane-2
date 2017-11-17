@@ -1,4 +1,4 @@
-package com.a03gmail.karumanchi.riya.mapsapp20;
+package com.a03gmail.karumanchi.riya.mapsapp20.Services;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -133,7 +132,7 @@ public class BluetoothLeService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        BluetoothLeService getService() {
+        public BluetoothLeService getService() {
             return BluetoothLeService.this;
         }
     }

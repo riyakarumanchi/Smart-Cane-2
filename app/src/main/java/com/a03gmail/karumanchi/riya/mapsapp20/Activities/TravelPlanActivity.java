@@ -1,4 +1,4 @@
-package com.a03gmail.karumanchi.riya.mapsapp20;
+package com.a03gmail.karumanchi.riya.mapsapp20.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.util.Log;
 
+import com.a03gmail.karumanchi.riya.mapsapp20.R;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,61 +20,17 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
-
-    // Just randomly adding a comment
+public class TravelPlanActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_travel_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // get origin and destination text
-                EditText origin = (EditText) findViewById(R.id.origin);
-                EditText destination = (EditText) findViewById(R.id.destination);
-                String originText = origin.getText().toString();
-                String destText = destination.getText().toString();
-
-                // convert all spaces to + for json request
-                originText = originText.replaceAll(" ", "+");
-                destText = destText.replaceAll(" ", "+");
-
-
-
-                String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" +
-                        originText + "&destination=" + destText +
-                        "&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
-
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                        (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Log.d("test", "Response: " + response.toString());
-                            }
-                        }, new Response.ErrorListener() {
-
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("jsonError", error.toString());
-                            }
-                        });
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
-
-
+        fab.setOnClickListener(actionButtonListener);
 
         // add in text box listeners for getting the start and destination
         // DON'T FORGET, EVENTUALLY USER SHOULD BE ABLE TO DO THIS VERBALLY
@@ -81,11 +38,10 @@ public class MainActivity extends AppCompatActivity {
         // should automatically take current location
 
         //Testing the parser to return latitude and longitude
-
     }
 
     public void goToHelpScreen(View view) {
-        Intent intent = new Intent(this, Main2Activity.class);
+        Intent intent = new Intent(this, UserProfileActivity.class);
             startActivity(intent);
     }
 
@@ -110,4 +66,43 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private View.OnClickListener actionButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // get origin and destination text
+            EditText origin = (EditText) findViewById(R.id.origin);
+            EditText destination = (EditText) findViewById(R.id.destination);
+            String originText = origin.getText().toString();
+            String destText = destination.getText().toString();
+
+            // convert all spaces to + for json request
+            originText = originText.replaceAll(" ", "+");
+            destText = destText.replaceAll(" ", "+");
+
+
+
+            String url = "https://maps.googleapis.com/maps/api/directions/json?origin=" +
+                    originText + "&destination=" + destText +
+                    "&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("test", "Response: " + response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("jsonError", error.toString());
+                        }
+                    });
+
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+    };
 }
