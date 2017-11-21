@@ -43,7 +43,7 @@
             android:stopWithTask="true"/>
 
         <activity android:name=".Activities.DeviceListActivity" />
-        <activity android:name=".Activities.EditProfileActivity"></activity>
+        <activity android:name=".Activities.EditProfileActivity" />
     </application>
 
 </manifest>
