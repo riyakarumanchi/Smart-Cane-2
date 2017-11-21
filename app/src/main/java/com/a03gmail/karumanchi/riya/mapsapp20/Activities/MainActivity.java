@@ -376,10 +376,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignore) {
             Log.e(TAG, ignore.toString());
         }
-        unbindService(mServiceConnection);
-        mService.stopSelf();
-        mService = null;
-        locationManager.removeUpdates(listener);
+
+        try {
+            unbindService(mServiceConnection);
+        } catch (Exception ignore) {
+            Log.e(TAG, ignore.toString());
+        }
+
+        if (mService != null) {
+            mService.stopSelf();
+            mService = null;
+        }
+
+        if (listener != null) {
+            locationManager.removeUpdates(listener);
+        }
     }
 
     @Override
@@ -404,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (!mBtAdapter.isEnabled()) {
+        if (mBtAdapter != null && !mBtAdapter.isEnabled()) {
             Log.i(TAG, "onResume - BT not enabled yet");
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
