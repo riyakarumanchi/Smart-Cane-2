@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int UART_PROFILE_READY = 10;
     public static final String TAG = "nRFUART";
     private static final int UART_PROFILE_CONNECTED = 20;
@@ -102,87 +102,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         */
-        //gps crashes if I delete this, I don't know why...
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        //locationButton.setOnClickListener(new View.OnClickListener() {
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        listener = new LocationListener() {
-            private Location previousLocation;
-
-            @Override
-            public void onLocationChanged(Location location) {
-                if (previousLocation != null) {
-                    // transformation for 2 points into a bearing
-                    double y = Math.sin(location.getLongitude() - previousLocation.getLongitude()) * Math.cos(location.getLatitude());
-                    double x = Math.cos(location.getLatitude()) * Math.sin(previousLocation.getLatitude()) -
-                            Math.sin(location.getLatitude()) * Math.cos(previousLocation.getLatitude());
-                    double bearing = Math.toDegrees(Math.atan2(y, x));
-                    UIUtil.showMessage(MainActivity.this, Double.toString(bearing) + " degrees");
-                } else {
-                    previousLocation = location;
-                }
-                //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(i);
-            }
-        };
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
-
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBtAdapter == null) {
-            UIUtil.showMessage(this, "Bluetooth is not available", Toast.LENGTH_LONG);
-            //finish();
-            return;
-        }
 //        messageListView = (ListView) findViewById(R.id.listMessage);
 //        listAdapter = new ArrayAdapter<String>(this, R.layout.message_detail);
 //        messageListView.setAdapter(listAdapter);
 //        messageListView.setDivider(null);
         btnConnectDisconnect = (Button) findViewById(R.id.btn_select);
-        service_init();
-
-
-        // Handle Disconnect & Connect button
         btnConnectDisconnect.setOnClickListener(clickListener);
-        // Handle Send button
 
+        // Handle Send button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 promptSpeechInput();
-                //Intent newIntent = new Intent(UserProfileActivity.this, EditProfileActivity.class);
-                //startActivity(newIntent);
             }
         });
-        // Set initial UI state
 
+        this.initializeBluetoothService();
+        this.checkPermissions();
     }
 
     private void promptSpeechInput() {
@@ -344,11 +282,35 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void service_init() {
+    private void initializeBluetoothService() {
         Intent bindIntent = new Intent(this, BluetoothLeService.class);
         bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(UARTStatusChangeReceiver, makeGattUpdateIntentFilter());
+
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null) {
+            UIUtil.showMessage(this, "Bluetooth is not available", Toast.LENGTH_LONG);
+            //finish();
+            return;
+        }
+    }
+
+    private void checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
     }
 
     private static IntentFilter makeGattUpdateIntentFilter() {
@@ -362,14 +324,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy()");
 
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(UARTStatusChangeReceiver);
@@ -394,38 +350,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart");
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
         if (mBtAdapter != null && !mBtAdapter.isEnabled()) {
             Log.i(TAG, "onResume - BT not enabled yet");
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -465,15 +396,8 @@ public class MainActivity extends AppCompatActivity {
                     destText = destText.replaceAll(" ", "+");
                     String originText = "";
 
-
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
                         return;
                     }
                     Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
@@ -482,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                     double latitiude = location.getLatitude();
                     originText = latitiude + "," + longitude;
 
-                    uri = "https://maps.googleapis.com/maps/api/directions/json?origin="+originText+"&destination="+destText+"&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
+                    uri = "https://maps.googleapis.com/maps/api/directions/json?origin=" + originText + "&destination=" + destText + "&mode=walking&key=AIzaSyD8974NwJZgDcS7x82l3wYgAVMWzBiXu6U";
 
                     GetGoogleJsonData dl = new GetGoogleJsonData(this);
                     dl.execute(uri);
@@ -504,15 +428,13 @@ public class MainActivity extends AppCompatActivity {
             startMain.addCategory(Intent.CATEGORY_HOME);
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
-            UIUtil.showMessage(this,"nRFUART's running in background.\n             Disconnect to exit");
-        }
-        else {
+            UIUtil.showMessage(this, "nRFUART's running in background.\n             Disconnect to exit");
+        } else {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle(R.string.popup_title)
                     .setMessage(R.string.popup_message)
-                    .setPositiveButton(R.string.popup_yes, new DialogInterface.OnClickListener()
-                    {
+                    .setPositiveButton(R.string.popup_yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -522,4 +444,58 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+                }
+                return;
+            }
+        }
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        private Location previousLocation;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            if (previousLocation != null) {
+                // transformation for 2 points into a bearing
+                double y = Math.sin(location.getLongitude() - previousLocation.getLongitude()) * Math.cos(location.getLatitude());
+                double x = Math.cos(location.getLatitude()) * Math.sin(previousLocation.getLatitude()) -
+                        Math.sin(location.getLatitude()) * Math.cos(previousLocation.getLatitude());
+                double bearing = Math.toDegrees(Math.atan2(y, x));
+                UIUtil.showMessage(MainActivity.this, Double.toString(bearing) + " degrees");
+            } else {
+                previousLocation = location;
+            }
+            //locationText.append("\n " + location.getLongitude() + " " + location.getLatitude());
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(i);
+        }
+    };
 }
